@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BMI Calculator</title>
+<style>
+:root{--bg:#f6fbf9;--text:#191c1b;--muted:#3f4946;--outline:#6f7977;--pri:#006a60;--onpri:#fff;--blue:#2196f3;--green:#4caf50;--orange:#ff9800;--red:#f44336;--err:#ba1a1a;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1514;--text:#dde4e2;--muted:#bfc9c6;--outline:#899390;--pri:#53dbc9;--onpri:#003731;--err:#ffb4ab;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1514;--text:#dde4e2;--muted:#bfc9c6;--outline:#899390;--pri:#53dbc9;--onpri:#003731;--err:#ffb4ab;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+.app{max-width:480px;margin:0 auto}
+header{padding:18px 18px 14px;font-size:22px;line-height:28px}
+.body{padding:20px 22px}
+label{display:block;position:relative;margin-bottom:16px}
+label span{position:absolute;top:-9px;left:12px;background:var(--bg);padding:0 4px;font-size:13px;color:var(--muted)}
+input{width:100%;height:56px;padding:0 16px;font-size:18px;border:1px solid var(--outline);border-radius:4px;background:transparent;color:var(--text)}
+input:focus{outline:2px solid var(--pri);outline-offset:-2px;border-color:transparent}
+label:focus-within span{color:var(--pri)}
+button{display:block;margin:22px auto 0;height:40px;border:0;border-radius:20px;padding:0 24px;font-size:15px;font-weight:500;background:var(--pri);color:var(--onpri);cursor:pointer}
+.err{color:var(--err);text-align:center;font-size:14px;min-height:20px;margin-top:14px}
+.res{text-align:center;margin-top:24px}
+.val{font-size:60px;font-weight:500;line-height:1.15}
+.cat{font-size:24px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>BMI Calculator</header>
+<div class="body">
+<label><span>Height (cm)</span><input id="h" type="number" inputmode="decimal" min="1"></label>
+<label><span>Weight (kg)</span><input id="w" type="number" inputmode="decimal" min="1"></label>
+<button id="go">Calculate BMI</button>
+<div class="err" id="e" role="alert"></div>
+<div class="res" id="r"></div>
+</div>
+</div>
+<script>
+var h=document.getElementById('h'),w=document.getElementById('w'),e=document.getElementById('e'),r=document.getElementById('r');
+function calc(){
+var hv=parseFloat(h.value),wv=parseFloat(w.value);
+if(!(hv>0)||!(wv>0)){e.textContent='Please enter valid numbers';r.innerHTML='';return}
+e.textContent='';
+var b=wv/((hv/100)*(hv/100)),c,col;
+if(b<18.5){c='Underweight';col='--blue'}else if(b<25){c='Normal';col='--green'}else if(b<30){c='Overweight';col='--orange'}else{c='Obese';col='--red'}
+r.innerHTML='';
+var v=document.createElement('div');v.className='val';v.textContent=b.toFixed(1);v.style.color='var('+col+')';
+var k=document.createElement('div');k.className='cat';k.textContent=c;k.style.color='var('+col+')';
+r.append(v,k)}
+document.getElementById('go').onclick=calc;
+[h,w].forEach(function(i){i.addEventListener('keydown',function(ev){if(ev.key==='Enter')calc()})});
+</script>
+</body>
+</html>
