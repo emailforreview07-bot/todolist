@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My To-Do List</title>
+<style>
+:root{--bg:#fbf8ff;--text:#1b1b21;--muted:#46464f;--outline:#797680;--pri:#555d9e;--onpri:#fff;--danger:#ba1a1a;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#131318;--text:#e4e1e9;--muted:#c7c5d0;--outline:#918f9a;--pri:#b9c3ff;--onpri:#1d2578;--danger:#ffb4ab;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#131318;--text:#e4e1e9;--muted:#c7c5d0;--outline:#918f9a;--pri:#b9c3ff;--onpri:#1d2578;--danger:#ffb4ab;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+.app{max-width:480px;margin:0 auto}
+header{padding:18px 18px 14px;font-size:22px;line-height:28px}
+.add{display:flex;align-items:center;gap:10px;padding:8px 14px 10px}
+.add input{flex:1;min-width:0;height:56px;padding:0 16px;font-size:17px;border:1px solid var(--outline);border-radius:4px;background:transparent;color:var(--text)}
+.add input::placeholder{color:var(--muted)}
+.add input:focus{outline:2px solid var(--pri);outline-offset:-2px;border-color:transparent}
+.add button{height:40px;border:0;border-radius:20px;padding:0 24px;font-size:15px;font-weight:500;background:var(--pri);color:var(--onpri);cursor:pointer}
+ul{list-style:none;margin:0;padding:6px 0 0}
+li{display:flex;align-items:center;gap:12px;padding:0 18px;min-height:54px;transition:transform .2s,opacity .2s}
+li span{flex:1;font-size:18px;word-break:break-word}
+li.done span{text-decoration:line-through}
+li input[type=checkbox]{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0 8px 0 0;border:2px solid var(--muted);border-radius:2px;cursor:pointer;display:grid;place-content:center;background:transparent;order:3}
+li input[type=checkbox]:checked{background:var(--pri);border-color:var(--pri)}
+li input[type=checkbox]:checked::after{content:"";width:5px;height:10px;border:solid var(--onpri);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+li button{background:none;border:0;color:var(--danger);font-size:16px;cursor:pointer;padding:6px;order:2}
+.empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:16px}
+.hint{text-align:center;color:var(--muted);font-size:13px;padding:24px 16px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>My To-Do List</header>
+<div class="add">
+<input id="t" placeholder="Enter a new task" aria-label="New task">
+<button id="a">Add</button>
+</div>
+<ul id="l"></ul>
+<div class="hint">Swipe a task left on a phone, or tap ✕, to delete it.</div>
+</div>
+<script>
+var tasks=[],l=document.getElementById('l'),t=document.getElementById('t');
+function render(){
+l.innerHTML='';
+if(!tasks.length){var e=document.createElement('div');e.className='empty';e.textContent='No tasks yet. Add one above!';l.appendChild(e);return}
+tasks.forEach(function(k){
+var li=document.createElement('li');if(k.done)li.className='done';
+var c=document.createElement('input');c.type='checkbox';c.checked=k.done;c.setAttribute('aria-label','Mark done');
+c.onchange=function(){k.done=c.checked;render()};
+var s=document.createElement('span');s.textContent=k.title;
+var d=document.createElement('button');d.textContent='✕';d.setAttribute('aria-label','Delete task');
+d.onclick=function(){del(k)};
+var x0=0;
+li.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+li.addEventListener('touchend',function(e){if(e.changedTouches[0].clientX-x0<-80){li.style.transform='translateX(-100%)';li.style.opacity='0';setTimeout(function(){del(k)},180)}});
+li.append(s,d,c);l.appendChild(li)})}
+function del(k){tasks=tasks.filter(function(z){return z!==k});render()}
+function add(){var v=t.value.trim();if(!v)return;tasks.push({title:v,done:false});t.value='';render()}
+document.getElementById('a').onclick=add;
+t.addEventListener('keydown',function(e){if(e.key==='Enter')add()});
+render();
+</script>
+</body>
+</html>
